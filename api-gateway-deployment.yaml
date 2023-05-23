@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: api-gateway-new
+  name: api-gateway-new
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway-new
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: api-gateway-new
+    spec:
+      containers:
+        - env:
+            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY
+              value: ' TRACE'
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          image: cefriandy/api-gateway-new:latest
+          name: api-gateway-new
+          ports:
+            - containerPort: 8888
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: api-gateway-new
+  name: api-gateway-new
+spec:
+  type: LoadBalancer
+  ports:
+    - name: "http"
+      port: 8888
+      targetPort: 8888
+  selector:
+    app: api-gateway-new
+status:
+  loadBalancer: {}
+
